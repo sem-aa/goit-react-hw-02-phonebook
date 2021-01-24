@@ -1,21 +1,21 @@
 import React from "react";
-// import shortid from "shortid";
-// import logo from "./logo.svg";
-// import "./App.css";
+
+import s from "./App.module.css";
 import Form from "./copmonents/Form/Form";
 import Phonebook from "./copmonents/Phonebook/Phonebook";
+import Filter from "./copmonents/Filter/Filter";
 
 var ids = require("short-id");
 
 class App extends React.Component {
   state = {
     contacts: [
-      { id: "id-1", name: "Sem", number: "0986566967" },
-      { id: "id-2", name: "Tarkin", number: "0966040004" },
-      { id: "id-3", name: "Jeka", number: "0979886763" },
+      { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
+      { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
+      { id: "id-3", name: "Eden Clements", number: "645-17-79" },
+      { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
     ],
-    name: "",
-    number: "",
+    filter: "",
   };
 
   deleteContact = (contactId) => {
@@ -27,16 +27,48 @@ class App extends React.Component {
   };
 
   formSubmitHandler = (data) => {
-    console.log(data);
-    const contact = {};
+    if (this.state.contacts.find((item) => item.name === data.name)) {
+      alert(`
+${data.name} already exists`);
+      return;
+    }
+    const contact = {
+      id: ids.generate(),
+      name: data.name,
+      number: data.number,
+    };
+    this.setState((prevState) => ({
+      contacts: [contact, ...prevState.contacts],
+    }));
+  };
+
+  changeFilter = (event) => {
+    this.setState({ filter: event.currentTarget.value });
+  };
+
+  getVisibleContact = () => {
+    const { filter, contacts } = this.state;
+
+    const NormalizedFilter = filter.toLowerCase();
+
+    return contacts.filter((contact) =>
+      contact.name.toLocaleLowerCase().includes(NormalizedFilter)
+    );
   };
 
   render() {
-    const { contacts } = this.state;
+    const { filter } = this.state;
+    const visibleContact = this.getVisibleContact();
     return (
-      <div className="App">
+      <div className={s.App}>
+        <h2 className={s.title}>Phonebook</h2>
         <Form onSubmit={this.formSubmitHandler} />
-        <Phonebook contacts={contacts} onDeleteContact={this.deleteContact} />
+        <h2 className={s.title}>Contacts</h2>
+        <Filter value={filter} onChange={this.changeFilter} />
+        <Phonebook
+          contacts={visibleContact}
+          onDeleteContact={this.deleteContact}
+        />
       </div>
     );
   }
