@@ -49,10 +49,10 @@ ${data.name} already exists`);
   getVisibleContact = () => {
     const { filter, contacts } = this.state;
 
-    const NormalizedFilter = filter.toLowerCase();
+    const normalizedFilter = filter.toLowerCase();
 
     return contacts.filter((contact) =>
-      contact.name.toLocaleLowerCase().includes(NormalizedFilter)
+      contact.name.toLocaleLowerCase().includes(normalizedFilter)
     );
   };
 
